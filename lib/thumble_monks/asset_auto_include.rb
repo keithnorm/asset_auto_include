@@ -14,13 +14,13 @@ module ThumbleMonks
       asset_autoinclude_options[:js_autoinclude_full_path] = Pathname.new("#{RAILS_ROOT}/public/javascripts/#{asset_autoinclude_options[:autoinclude_subdir]}")
       asset_autoinclude_options[:css_autoinclude_full_path] = Pathname.new("#{RAILS_ROOT}/public/stylesheets/#{asset_autoinclude_options[:autoinclude_subdir]}")
 
-      def javascript_auto_include_tags
-        files = autoloadable_files(asset_autoinclude_options[:js_autoinclude_full_path], "js")
+      def javascript_auto_include_tags(options = {})
+        files = autoloadable_files(asset_autoinclude_options[:js_autoinclude_full_path], "js", options)
         javascript_include_tag(*files)
       end
 
-      def stylesheet_auto_include_tags
-        files = autoloadable_files(asset_autoinclude_options[:css_autoinclude_full_path], "css")
+      def stylesheet_auto_include_tags(options = {})
+        files = autoloadable_files(asset_autoinclude_options[:css_autoinclude_full_path], "css", options)
         print_files = autoloadable_files(asset_autoinclude_options[:css_autoinclude_full_path], "print.css")
         print_files.push({:media => 'print'})
 
@@ -29,11 +29,11 @@ module ThumbleMonks
       
     private
       
-      def autoloadable_files(search_base_path, extension)
+      def autoloadable_files(search_base_path, extension, options = {})
         path = controller.controller_path
         search_glob = asset_glob(controller.action_name, extension)
         finds = search_dir(search_base_path, path, search_glob)
-        finds.map { |loadable_file| "#{asset_autoinclude_options[:autoinclude_subdir]}/#{path}/#{loadable_file}"  }
+        finds.map { |loadable_file| "#{asset_autoinclude_options[:autoinclude_subdir]}/#{options[:prefix]}/#{path}/#{loadable_file}"  }
       end
       
       def asset_glob(action_name, file_extension)

@@ -31,6 +31,24 @@ class AssetAutoIncludeTest < ActionView::TestCase
       end
       
     end # auto-loading Javascript
+
+    context "auto-loading Javascript with a specific prefix" do
+      setup { fake_response javascript_auto_include_tags(:prefix => "touch") }
+      
+      should "include any files for the entire controller" do
+        assert_select 'script[src$=/touch/foo/bar/controller.js]'
+      end
+      
+    end # Javascript prefix
+
+    context "auto-loading stylesheets with a specific prefix" do
+      setup { fake_response stylesheet_auto_include_tags(:prefix => "touch") }
+      
+      should "include any files for the entire controller" do
+        assert_select 'link[href$=/touch/foo/bar/controller.css]'
+      end
+      
+    end # stylesheet prefix
     
     context "auto-loading stylesheets" do
       setup { fake_response stylesheet_auto_include_tags }
