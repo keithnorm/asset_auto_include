@@ -30,10 +30,11 @@ module ThumbleMonks
     private
       
       def autoloadable_files(search_base_path, extension, options = {})
+        prefix = "/#{options[:prefix]}" if options[:prefix]
         path = controller.controller_path
         search_glob = asset_glob(controller.action_name, extension)
         finds = search_dir(search_base_path, path, search_glob)
-        finds.map { |loadable_file| "#{asset_autoinclude_options[:autoinclude_subdir]}/#{options[:prefix]}/#{path}/#{loadable_file}"  }
+        finds.map { |loadable_file| "#{asset_autoinclude_options[:autoinclude_subdir]}#{prefix}/#{path}/#{loadable_file}"  }
       end
       
       def asset_glob(action_name, file_extension)

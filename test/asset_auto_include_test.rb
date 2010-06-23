@@ -4,7 +4,6 @@ class AssetAutoIncludeTest < ActionView::TestCase
   attr_reader :controller
 
   context "A controller that has a set of related JS and CSS files" do
-    
     setup do
       @controller = mock("mock controller")
       @controller.expects(:controller_path).returns("foo/bar").at_least_once
@@ -30,6 +29,9 @@ class AssetAutoIncludeTest < ActionView::TestCase
         assert_select 'script[src$=foo/bar/edit.js]', :count => 0
       end
       
+      should "not add too many slashes" do
+        assert_select 'script[src*="//"]', :count => 0
+      end
     end # auto-loading Javascript
 
     context "auto-loading Javascript with a specific prefix" do
@@ -76,13 +78,15 @@ class AssetAutoIncludeTest < ActionView::TestCase
       should "not include any files for other actions" do
         assert_select 'link[href$=foo/bar/index.css]', :count => 0
       end
+
+      should "not add too many slashes" do
+        assert_select 'link[href*=//]', :count => 0
+      end
       
     end # auto-loading stylesheets
-    
   end # A controller that has a set of related JS files
   
   context "A controller that has no JS or CSS files" do
-
     setup do
       @controller = mock("mock controller")
       @controller.expects(:controller_path).returns("baz").at_least_once
@@ -98,9 +102,5 @@ class AssetAutoIncludeTest < ActionView::TestCase
       fake_response stylesheet_auto_include_tags
       assert @response.body.blank?
     end
-
   end # A controller that has no JS or CSS files
-  
 end
-
-
