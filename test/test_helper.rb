@@ -13,5 +13,6 @@ require "#{File.dirname(__FILE__)}/../init"
 class Test::Unit::TestCase
   def fake_response(body, opts = {})
     @response ||= OpenStruct.new(:body => body, :content_type => opts[:content_type] || "application/xml")
+    self.class.module_eval { def response_from_page_or_rjs; html_document.root; end }
   end
 end
