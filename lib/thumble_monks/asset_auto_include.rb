@@ -11,8 +11,8 @@ module ThumbleMonks
       self.asset_autoinclude_options = {}
       asset_autoinclude_options[:asset_glob_patterns] = %w[controller %s %s-* *-%s *-%s-*]
       asset_autoinclude_options[:autoinclude_subdir] = "app"
-      asset_autoinclude_options[:js_autoinclude_full_path] = Pathname.new("#{RAILS_ROOT}/public/javascripts/#{asset_autoinclude_options[:autoinclude_subdir]}")
-      asset_autoinclude_options[:css_autoinclude_full_path] = Pathname.new("#{RAILS_ROOT}/public/stylesheets/#{asset_autoinclude_options[:autoinclude_subdir]}")
+      asset_autoinclude_options[:js_autoinclude_full_path] = Pathname.new("#{RAILS_ROOT}/public/javascripts")
+      asset_autoinclude_options[:css_autoinclude_full_path] = Pathname.new("#{RAILS_ROOT}/public/stylesheets")
 
       def javascript_auto_include_tags(options = {})
         files = autoloadable_files(asset_autoinclude_options[:js_autoinclude_full_path], "js", options)
@@ -30,11 +30,11 @@ module ThumbleMonks
     private
       
       def autoloadable_files(search_base_path, extension, options = {})
-        prefix = "/#{options[:prefix]}" if options[:prefix]
-        path = controller.controller_path
+        path = [options[:prefix] || asset_autoinclude_options[:autoinclude_subdir], controller.controller_path]
+        path = path.join('/')
         search_glob = asset_glob(controller.action_name, extension)
         finds = search_dir(search_base_path, path, search_glob)
-        finds.map { |loadable_file| "#{asset_autoinclude_options[:autoinclude_subdir]}#{prefix}/#{path}/#{loadable_file}"  }
+        finds.map { |loadable_file| "#{path}/#{loadable_file}"  }
       end
       
       def asset_glob(action_name, file_extension)
@@ -46,7 +46,10 @@ module ThumbleMonks
       
       def search_dir(root, subdir, asset_glob_pattern)
         full = (root + subdir)
+        puts "#{root}/#{subdir}/#{asset_glob_pattern}"
         Pathname.glob("#{root}/#{subdir}/#{asset_glob_pattern}").map do |matches|
+          puts matches
+          puts full
           matches.relative_path_from(full)
         end
       end
