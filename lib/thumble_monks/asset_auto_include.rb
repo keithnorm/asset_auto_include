@@ -46,10 +46,7 @@ module ThumbleMonks
       
       def search_dir(root, subdir, asset_glob_pattern)
         full = (root + subdir)
-        puts "#{root}/#{subdir}/#{asset_glob_pattern}"
         Pathname.glob("#{root}/#{subdir}/#{asset_glob_pattern}").map do |matches|
-          puts matches
-          puts full
           matches.relative_path_from(full)
         end
       end
